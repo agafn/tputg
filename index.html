@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Агафонов 8В11</title>
+</head>
+<body>
+    <label for="inputArray">Массив объектов:</label>
+    <input id="inputArray" type="text">
+    <br>
+    <label for="inputKey">Ключ для фильтрации:</label>
+    <input id="inputKey" type="text">
+    <br>
+    <label for="inputValue">Значение для фильтрации:</label>
+    <input id="inputValue" type="text">
+    <br>
+    <button onclick="filterArray()">Фильтровать массив</button>
+    <div id="output"></div>
+
+    <script>
+        function filterArray() {
+            const inputArray = document.getElementById('inputArray').value;
+            const inputKey = document.getElementById('inputKey').value;
+            const inputValue = document.getElementById('inputValue').value;
+
+            // Преобразуем введенный пользователем массив объектов в JS-объект
+            let parsedArray;
+            try {
+                parsedArray = JSON.parse(inputArray);
+            } catch (error) {
+                const outputError = document.getElementById('output');
+                outputError.innerHTML = '<p color="red">Введите корректный массив объектов в формате JSON</p>'//Введите корректный массив объектов в формате JSON';
+                //alert('Введите корректный массив объектов в формате JSON');
+                return;
+            }
+
+            if (!Array.isArray(parsedArray)) {
+                const outputError = document.getElementById('output');
+                outputError.innerHTML = '<p color="red">Введите корректный массив объектов в формате JSON</p>'
+                //outputError.textContent = 'Введите корректный массив объектов в формате JSON';
+                //alert('Введите корректный массив объектов в формате JSON');
+                return;
+            }
+
+            // Удалить строки с пустыми значениями
+            const filteredArray = parsedArray.map(obj => {
+                for (const key in obj) {
+                    if (obj.hasOwnProperty(key) && obj[key] === '') {
+                        delete obj[key];
+                    }
+                }
+                return obj;
+            });
+
+            // Фильтруем массив по ключу и значению
+            const finalArray = parsedArray.filter(obj => {
+                if (obj.hasOwnProperty(inputKey)) {
+                    if (typeof obj[inputKey] === 'string') {
+                        return obj[inputKey] === inputValue;
+                    } else {
+                        return obj[inputKey] === Number(inputValue);
+                    }
+                } else {
+                    return false;
+                }
+            });
+
+            // Выводим результат на страницу
+            const outputDiv = document.getElementById('output');
+            outputDiv.textContent = JSON.stringify(finalArray, null, 4);
+        }
+    </script>
+</body>
+</html>
